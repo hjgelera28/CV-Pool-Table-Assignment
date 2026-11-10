@@ -73,7 +73,6 @@ void MyApplication()
 		cout << "Perpective Tranforming" << pool_files[file_no] << "..." << endl;
 		warpPerspective(pool_image[file_no], temp_pool_image[file_no], perspective_matrix, pool_image[file_no].size());
 	}
-
 	memcpy(new_pool_image, temp_pool_image, sizeof(Mat) * number_of_images);
 
 	// Cropping images
@@ -85,11 +84,29 @@ void MyApplication()
 	{
 		temp_pool_image[file_no] = new_pool_image[file_no](Rect(0, 0, new_width, new_height));
 	}
-
 	memcpy(new_pool_image, temp_pool_image, sizeof(Mat) * number_of_images);
 
 	// Show Transformed Images
 	show_image_array(new_pool_image, pool_files, number_of_images);
+
+	// Convert image to grayscale
+	// ==================================================
+	Mat* gray_pool_image = new Mat[number_of_images];
+
+	for (int file_no = 0; (file_no < number_of_images); file_no++)
+	{
+		cvtColor(new_pool_image[file_no], gray_pool_image[file_no], COLOR_BGR2GRAY);
+	}
+	show_image_array(gray_pool_image, pool_files, number_of_images);
+
+	// Canny Edge Detection
+	// ==================================================
+	Mat* canny_pool_image = new Mat[number_of_images];
+	for (int file_no = 0; (file_no < number_of_images); file_no++)
+	{
+		Canny(gray_pool_image[file_no], canny_pool_image[file_no], 75, 150);
+	}
+	show_image_array(canny_pool_image, pool_files, number_of_images);
 }
 
 void show_image_array(Mat* image_array, char** image_files, int number_of_images)
